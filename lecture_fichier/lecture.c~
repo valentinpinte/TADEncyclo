@@ -1,0 +1,59 @@
+#include "lecture.h"
+
+
+encyclopedie lecture_fichier(char *nomFichier)
+{
+
+    FILE *f;
+
+    encyclopedie resultat;
+    long id;
+    char lectureActu[1000000];
+    char *titre, *titreTempo, *contenue;
+    int i, retour;
+    char poubelle;
+    ptArticle articleActu;
+    resultat = creer_encyclopedie();
+
+    if (!(f = fopen(nomFichier, "r")))
+    {
+        printf("erreur d'ouverture du fichier %s.\n", nomFichier);
+    }
+    else
+    {
+        retour = fscanf(f, "%c", &lectureActu[i]);
+        while (retour != EOF)
+        {
+            fscanf(f, "%ld", &id);
+
+            i = 0;
+
+            retour = fscanf(f, "%c", &lectureActu[i]);
+            while (lectureActu[i] != '\n' && lectureActu[i] != '\r')
+            {
+                i++;
+                retour = fscanf(f, "%c", &lectureActu[i]);
+            }
+            lectureActu[i] = '\n';
+            //printf("%s", lectureActu);
+            titreTempo = strchr(lectureActu, '|') + 1;
+            contenue = strchr(titreTempo, '|') + 1;
+
+            char *x;
+            x = strstr(titreTempo, "|");
+
+            int nb = x - titreTempo;
+            printf("nb %ld \n",nb);
+
+            titre = malloc(sizeof(char) * nb + 1);
+            strncpy(titre, titreTempo, nb);
+            titre[nb]=0;
+
+            inserer(resultat,id,"test",contenue);
+            free(titre);
+
+        }
+    }
+    
+    return resultat;
+}

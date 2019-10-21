@@ -1,0 +1,16 @@
+#include "./liste_chainee/liste.h"
+
+int main(int argc, char const *argv[])
+{
+    encyclopedie e = creer_encyclopedie();
+    e = inserer(e,1000,"testtt","coucou");
+    e = inserer(e,2000,"Test","Test");
+    e = supprimer(e,2000);
+    
+    e = lecture_fichier("test.dat");
+    affichage(e);
+    
+    printf("Contenu de l'article 1000 : %s\n",rechercher_article(e,1000));
+    detruire_bibliotheque(e);
+    return 0;
+}
