@@ -8,10 +8,6 @@ ptEncyclopedie lecture_fichier(char *nomFichier)
     ptEncyclopedie resultat;
     long id;
     char lectureActu[1000000];
-    char *titre, *titreTempo, *contenue;
-    int i, retour;
-    char poubelle;
-    ptArticle articleActu;
     resultat = creer_encyclopedie();
 
     if (!(f = fopen(nomFichier, "r")))
@@ -21,45 +17,44 @@ ptEncyclopedie lecture_fichier(char *nomFichier)
     else
     {
 
-        retour = fscanf(f, "%ld", &id);
 
-        while (retour != EOF)
+        while (fgets(lectureActu,1000000,f))
         {
-
-            i = 0;
-
-            retour = fscanf(f, "%c", &lectureActu[i]);
-            while (lectureActu[i] != '\n' && lectureActu[i] != '\r')
-            {
-                i++;
-                retour = fscanf(f, "%c", &lectureActu[i]);
-            }
-            lectureActu[i] = '\n';
             
-            titreTempo = strchr(lectureActu, '|') +1;
-            contenue = strchr(titreTempo, '|') + 1;
+            
 
-            char *x;
-            x = strstr(titreTempo, "|") + 1;
-            printf("\nx : %s\n", x);
-            printf("\ntempo : %s\n", titreTempo);
+            int i2 = 1;
+            char *actu = strtok(lectureActu, "|");
 
-            int nb = x - titreTempo;
+            char *contenue,*titre;
 
-            titre = malloc(sizeof(char) * (nb+1));
-            strncpy(titre, titreTempo, nb-1);
-            titre[nb+1] = 0;
+            while (i2 <= 3)
+            {
+                switch (i2)
+                {
+                case 1:
+                    
+                    id = atol(actu);
+                    break;
+                case 2:
+                    titre = malloc(sizeof(char) * (strlen(actu)+1));
+                    strcpy(titre, actu);
 
-            printf("nb %d\n", nb);
-
-            printf("id : \n%ld\ntitre :\n%s\n",id,titre);
-            printf("\ncontenue %s\n", contenue);
+                    break;
+                case 3:
+                    contenue = malloc(sizeof(char) * (strlen(actu)+1));
+                    strcpy(contenue, actu);
+                    break;
+                }
+                i2++;
+                actu = strtok(NULL, "|");
+            }
             inserer(resultat, id, titre, contenue);
             
-            retour = fscanf(f, "%ld", &id);
-            //free(titre);
         }
     }
+
+    
 
     return resultat;
 }

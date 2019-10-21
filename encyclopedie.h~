@@ -15,7 +15,8 @@ typedef struct Encyclopedie
     void *premier;
 } encyclopedie, *ptEncyclopedie;
 
-encyclopedie creer_encyclopedie();
+ptEncyclopedie creer_encyclopedie();
+//ptEncyclopedie inserer(ptEncyclopedie e, long id, char *titre, char *content);
 
 //typedef struct maillon
 //{} Maillon, *ptMaillon;
