@@ -44,9 +44,9 @@ ptEncyclopedie inserer(ptEncyclopedie e, long id, char *titre, char *contenu){
     return e;
 }
 
-/*ptEncyclopedie supprimer(ptEncyclopedie e, long id){
+ptEncyclopedie supprimer(ptEncyclopedie e, long id){
 	bool supprime;
-	Arbre parcours, precedent;
+	Arbre pere, parcours, precedent, supprime;
 	article art;
 	
 	if(e->premier != NULL) {
@@ -54,25 +54,30 @@ ptEncyclopedie inserer(ptEncyclopedie e, long id, char *titre, char *contenu){
 		parcours = e->premier;
 		precedent = NULL;
 		while(supprime==false && parcours!=NULL) {
-			if(parcours->article->id==id) {			
-				free(parcours->article);
-				if(precedent==NULL) {
-					e->premier = parcours->maillonSuivant;
-				} else {
-					precedent->maillonSuivant = maillon->maillonSuivant;
+			if(id < parcours->article->id) {
+				precedent = parcours;
+				parcours = parcours->feuilleGauche;
+			} else if(id > parcours->article->id) {
+				precedent = parcours;
+				parcours = parcours->feuilleDroite;
+			} else {
+				pere = precedent;
+				supprime = parcours;
+				precedent = parcours;
+				parcours = parcours->feuillGauche;
+				while(parcours!=NULL) {
+					
 				}
-				printf("Supprime : %s \n",maillon->article->titre);
-				free(maillon);
-				supprime = true;
 			}
-			precedent = maillon;
-			maillon = maillon->maillonSuivant;		
+		}
+		if(supprime==false) {
+			printf("Erreur dans la suppression : l'article cible n'a pas ete trouve\n");
 		}
 	}
 	return e;
 }
 
-char* rechercher_article(ptEncyclopedie e, long id) {
+/*char* rechercher_article(ptEncyclopedie e, long id) {
 	char* resultat = NULL;	
 	ptMaillon maillon;
 	maillon = e->premier;
