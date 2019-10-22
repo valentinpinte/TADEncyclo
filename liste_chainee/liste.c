@@ -1,45 +1,24 @@
 #include "liste.h"
-#include <stdbool.h>
 
 ptEncyclopedie inserer(ptEncyclopedie e, long id, char *titre, char *contenu)
 {
 	ptArticle nArticle;
 	ptMaillon nMaillon;
-	nArticle = malloc(sizeof(article));
+	nArticle = (ptArticle)malloc(sizeof(article));
 	nArticle->id = id;
-	nArticle->titre = malloc(sizeof(char) * strlen(titre));
+	//nArticle->titre = malloc(sizeof(char) * strlen(titre));
 	nArticle->titre = titre;
-	nArticle->contenu = malloc(sizeof(char) * strlen(contenu));
+	//nArticle->contenu = malloc(sizeof(char) * strlen(contenu));
 	nArticle->contenu = contenu;
 
-	nMaillon = malloc(sizeof(maillon));
+	nMaillon = (ptMaillon)malloc(sizeof(maillon));
 	nMaillon->article = nArticle;
 
 	nMaillon->maillonSuivant = e->premier;
 	e->premier = nMaillon;
-	printf(" TITRE INSERTION %s  ID %ld CONTENUE %s\n", ((ptMaillon)(e->premier))->article->titre, ((ptMaillon)(e->premier))->article->id, ((ptMaillon)(e->premier))->article->contenu);
+	//printf(" TITRE INSERTION %s  ID %ld CONTENUE %s\n", ((ptMaillon)(e->premier))->article->titre, ((ptMaillon)(e->premier))->article->id, ((ptMaillon)(e->premier))->article->contenu);
 	return e;
 }
-
-/*encyclopedie inserer(ptEncyclopedie e, long id, char *titre, char *contenu){
-    ptArticle nArticle;
-    ptMaillon nMaillon;
-    nArticle = malloc(sizeof(article));
-    nArticle->id = id;
-    nArticle->titre = malloc(sizeof(char) * strlen(titre));
-    nArticle->titre = titre;
-    nArticle->contenu = malloc(sizeof(char) * strlen(contenu));
-    nArticle->contenu = contenu;
-    
-    nMaillon = malloc(sizeof(maillon));
-    nMaillon->article = nArticle;
-
-    nMaillon->maillonSuivant = e->premier;
-    e->premier = nMaillon;
-    printf("%s \n",((ptMaillon)(e->premier))->article->titre);
-    return *e;
-    
-}*/
 
 ptEncyclopedie supprimer(ptEncyclopedie e, long id)
 {
@@ -54,7 +33,7 @@ ptEncyclopedie supprimer(ptEncyclopedie e, long id)
 	{
 		if (maillon->article->id == id)
 		{
-			free(maillon->article);
+			
 			if (precedent == NULL)
 			{
 				e->premier = maillon->maillonSuivant;
@@ -63,7 +42,7 @@ ptEncyclopedie supprimer(ptEncyclopedie e, long id)
 			{
 				precedent->maillonSuivant = maillon->maillonSuivant;
 			}
-			printf("Supprime : %s \n", maillon->article->titre);
+			free(maillon->article);
 			free(maillon);
 			supprime = true;
 		}
@@ -105,7 +84,7 @@ void affichage(ptEncyclopedie e)
 
 	while (maillon != NULL)
 	{
-		printf("\nid : %ld \ntitre : %s\ncontenue : %s", maillon->article->id, maillon->article->titre, maillon->article->contenu);
+		printf("\nid : %ld \ntitre : %s\ncontenue : %0.100s", maillon->article->id, maillon->article->titre, maillon->article->contenu);
 		maillon = maillon->maillonSuivant;
 	}
 }
@@ -120,23 +99,32 @@ ptEncyclopedie rechercher_article_plein_texte(ptEncyclopedie e, char *word)
 	{
 		if (strstr(maillon->article->contenu, word) || strstr(maillon->article->titre, word))
 		{
-			inserer(newEncyclopedie,maillon->article->id,maillon->article->titre,maillon->article->contenu);
+			long id = maillon->article->id;
+			char *titre = malloc(sizeof(char) * (strlen(maillon->article->titre) + 1));
+			strcpy(titre,maillon->article->titre);
+			char *contenu = malloc(sizeof(char) * (strlen(maillon->article->contenu) + 1));
+			strcpy(contenu,maillon->article->contenu);
+			inserer(newEncyclopedie,id,titre,contenu);
 		}
 		maillon = maillon->maillonSuivant;
 	}
 	return newEncyclopedie;
 }
 
-void detruire_bibliotheque(ptEncyclopedie e)
+ptEncyclopedie detruire_bibliotheque(ptEncyclopedie e)
 {
 	ptMaillon maillon;
 	maillon = e->premier;
 	while (maillon != NULL)
 	{
 		e->premier = maillon->maillonSuivant;
+		free(maillon->article->titre);
+		free(maillon->article->contenu);
 		free(maillon->article);
 		free(maillon);
 		maillon = e->premier;
 	}
-	printf("L'encyclopedie a ete detruite\n");
+	free(e);
+	printf("\nL'encyclopedie a ete detruite\n");
+	return e;
 }
